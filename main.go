@@ -2,11 +2,24 @@
 package main
 
 import (
+	"PhotoAlbum/ini-master"
 	"fmt"
 	"io"
-	"log"
 	"os"
 )
+
+type server struct {
+	ip   string
+	port string
+}
+
+type data struct {
+	folder string
+}
+
+type html struct {
+	title string
+}
 
 func readdir(dir string) {
 	dh, _ := os.Open(dir)
@@ -26,7 +39,12 @@ func readdir(dir string) {
 }
 
 func main() {
-
-	readdir(".")
-
+	c, err := ini.Load("PhotoAlbum.conf")
+	if err != nil {
+		fmt.Println("Загрузили конфиг:", &c)
+	}
+	//	path := c.Section("data").GetKey("folder").String()
+	section, err := c.GetSection("server")
+	fmt.Println(section.GetKey("ip"))
+	//	readdir("./Новая папка")
 }
