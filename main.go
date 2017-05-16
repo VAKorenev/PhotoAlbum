@@ -5,7 +5,10 @@ import (
 	"fmt"
 	"ini-master"
 	"io"
+	"log"
+	"net/http"
 	"os"
+	"strings"
 )
 
 type server struct {
@@ -24,6 +27,10 @@ func (s *server) load(f *ini.File) {
 		s.port = "8080"
 	}
 	s.port = port.String()
+}
+
+func (s *server) getIP() string {
+	return s.ip + ":" + s.port
 }
 
 type data struct {
@@ -67,6 +74,10 @@ func readdir(dir string) {
 	}
 }
 
+func root(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Привет!")
+}
+
 func main() {
 	c, err := ini.Load("PhotoAlbum.conf")
 	if err != nil {
@@ -78,6 +89,10 @@ func main() {
 	d.load(c)
 	h := new(html)
 	h.load(c)
-	readdir(d.folder)
-	fmt.Println(s.ip, s.port, d.folder, h.title)
+	//readdir(d.folder)
+	http.Handle("/", http.FileServer(http.Dir("_html")))
+
+	if err := http.ListenAndServe(s.getIP(), nil); err != nil {
+		log.Fatal("ListenAndServe: ", err)
+	}
 }
