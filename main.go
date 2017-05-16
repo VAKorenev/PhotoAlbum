@@ -4,6 +4,7 @@ package main
 import (
 	"PhotoAlbum/ini-master"
 	"fmt"
+	"ini-master"
 	"io"
 	"os"
 )
